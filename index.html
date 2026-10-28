@@ -673,8 +673,8 @@
                 instructions: `
                     <div class="space-y-4 text-xs">
                         <div class="bg-blue-950/40 border border-blue-800/50 p-3 rounded text-blue-200">
-                            <h3 class="font-bold text-sm text-blue-300 mb-1">Task 0‹ Willkommen beim CyberCrack Simulator!</h3>
-                            <p>Bevor du die Hack-The-Box-RÃ¤tsel lÃ¶sen kannst, musst du zuerst deinen Zielserver (Target Machine) starten und dich Ã¼ber die Konsole verbinden.</p>
+                            <h3 class="font-bold text-sm text-blue-300 mb-1">👋 Willkommen beim CyberCrack Simulator!</h3>
+                            <p>Bevor du die Hack-The-Box-Rätsel lösen kannst, musst du zuerst deinen Zielserver (Target Machine) starten und dich über die Konsole verbinden.</p>
                         </div>
 
                         <div class="space-y-3">
@@ -696,14 +696,14 @@
                         </div>
 
                         <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
-                            <strong>ðŸŽ¯ Ziel:</strong> Verbinde dich mit dem Server. Sobald die Verbindung steht, erhÃ¤ltst du deine allererste Flagge als BestÃ¤tigung!
+                            <strong>🎯 Ziel:</strong> Verbinde dich mit dem Server. Sobald die Verbindung steht, erhältst du deine allererste Flagge als Bestätigung!
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
                                 <li>connect 10.10.142.88 <span class="text-gray-400 font-sans">- Verbindet dich mit dem Zielserver</span></li>
-                                <li>help <span class="text-gray-400 font-sans">- Zeigt alle verfÃ¼gbaren Terminal-Befehle an</span></li>
+                                <li>help <span class="text-gray-400 font-sans">- Zeigt alle verfügbaren Terminal-Befehle an</span></li>
                             </ul>
                         </div>
                     </div>
@@ -731,7 +731,7 @@
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
                                 <li>ls -la <span class="text-gray-400 font-sans">- Zeigt alle Dateien inkl. versteckten (.dateiname) an</span></li>
                                 <li>cat .secret_flag.txt <span class="text-gray-400 font-sans">- Liest den Inhalt der versteckten Datei aus</span></li>
@@ -743,13 +743,13 @@
                 hint: "Tippe im Terminal 'ls -la' gefolgt von 'cat .secret_flag.txt'",
                 flag: "FLAG{ls_la_master_2026}",
                 files: {
-                    "notes.txt": "Ã–ffentliche Notizen: Keine AuffÃ¤lligkeiten.",
+                    "notes.txt": "Öffentliche Notizen: Keine Auffälligkeiten.",
                     ".secret_flag.txt": "FLAG{ls_la_master_2026}"
                 }
             },
             {
                 id: 2,
-                title: "Task 2: Der verschlÃ¼sselte Funkspruch",
+                title: "Task 2: Der verschlüsselte Funkspruch",
                 subtitle: "Base64 Text dekodieren",
                 category: "CRYPTOGRAPHY & ENCODING",
                 xp: 150,
@@ -759,13 +759,13 @@
                         <p class="text-gray-300">Wir haben einen abgefangenen Text abgelegt. Er sieht unleserlich aus und endet oft mit <code class="text-amber-400">==</code> (Base64-Kodierung).</p>
 
                         <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
-                            <strong>ðŸŽ¯ Ziel:</strong> Lies die Datei <code class="text-emerald-400">intercepted.log</code> und dekodiere die Zeile im Terminal mit <code class="text-emerald-400">base64 -d</code>.
+                            <strong>Ziel:</strong> Lies die Datei <code class="text-emerald-400">intercepted.log</code> und dekodiere die Zeile im Terminal mit <code class="text-emerald-400">base64 -d</code>.
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
-                                <li>cat intercepted.log <span class="text-gray-400 font-sans">- Liest die verschlÃ¼sselte Log-Datei aus</span></li>
+                                <li>cat intercepted.log <span class="text-gray-400 font-sans">- Liest die verschlüsselte Log-Datei aus</span></li>
                                 <li>cat intercepted.log | base64 -d <span class="text-gray-400 font-sans">- Leitet den Inhalt an den Base64-Decoder weiter</span></li>
                             </ul>
                         </div>
@@ -780,7 +780,7 @@
             },
             {
                 id: 3,
-                title: "Task 3: Der digitale MÃ¼lleimer",
+                title: "Task 3: Der digitale Mülleimer",
                 subtitle: "Backup- & Alt-Dateien",
                 category: "BACKUP & SECRETS",
                 xp: 150,
@@ -790,14 +790,14 @@
                         <p class="text-gray-300">Entwickler vergessen oft alte Sicherungskopien (wie <code class="text-amber-400">config.php.bak</code> oder <code class="text-amber-400">.old</code>) auf dem Server.</p>
 
                         <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
-                            <strong>ðŸŽ¯ Ziel:</strong> Liste alle Dateien im Verzeichnis auf und finde das verbliebene Passwort in der Backup-Datei.
+                            <strong>🎯 Ziel:</strong> Liste alle Dateien im Verzeichnis auf und finde das verbliebene Passwort in der Backup-Datei.
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
                                 <li>ls -la <span class="text-gray-400 font-sans">- Sucht nach Backup-Dateien wie .bak oder .old</span></li>
-                                <li>cat config.php.bak <span class="text-gray-400 font-sans">- Ã–ffnet die alte Sicherungsdatei</span></li>
+                                <li>cat config.php.bak <span class="text-gray-400 font-sans">- Öffnet die alte Sicherungsdatei</span></li>
                             </ul>
                         </div>
                     </div>
@@ -819,23 +819,23 @@
                 path: "~/level_04",
                 instructions: `
                     <div class="space-y-4 text-xs">
-                        <p class="text-gray-300">PasswÃ¶rter werden meist als PrÃ¼fsumme (Hash) gespeichert. In <code class="text-amber-400">hash.txt</code> liegt ein MD5-Hash:</p>
+                        <p class="text-gray-300">Passwörter werden meist als Prüfsumme (Hash) gespeichert. In <code class="text-amber-400">hash.txt</code> liegt ein MD5-Hash:</p>
                         <code class="block bg-black p-2 rounded text-amber-300 font-mono">21232f297a57a5a743894a0e4a801fc3</code>
 
                         <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
-                            <strong>ðŸŽ¯ Ziel:</strong> Welches Standard-Wort fÃ¼r Systemverwalter ergibt diesen Hash? Gib die Flagge als <code class="text-emerald-400">FLAG{wort}</code> ein.
+                            <strong>🎯 Ziel:</strong> Welches Standard-Wort für Systemverwalter ergibt diesen Hash? Gib die Flagge als <code class="text-emerald-400">FLAG{wort}</code> ein.
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
-                                <li>cat hash.txt <span class="text-gray-400 font-sans">- zeigt den verschlÃ¼sselten MD5-Hash an</span></li>
+                                <li>cat hash.txt <span class="text-gray-400 font-sans">- zeigt den verschlüsselten MD5-Hash an</span></li>
                             </ul>
                         </div>
                     </div>
                 `,
                 editorContent: `HASH: 21232f297a57a5a743894a0e4a801fc3\nWordlist hint: Standard English administrator term.`,
-                hint: "Der Hash gehÃ¶rt zum englischen Wort 'admin'. Bilde FLAG{admin}",
+                hint: "Der Hash gehört zum englischen Wort 'admin'. Bilde FLAG{admin}",
                 flag: "FLAG{admin}",
                 files: {
                     "hash.txt": "21232f297a57a5a743894a0e4a801fc3"
@@ -844,20 +844,20 @@
             {
                 id: 5,
                 title: "Task 5: Das faule Ei im Quellcode",
-                subtitle: "Hartkodierte PasswÃ¶rter",
+                subtitle: "Hartkodierte Passwörter",
                 category: "CODE REVIEW",
                 xp: 200,
                 path: "~/level_05",
                 instructions: `
                     <div class="space-y-4 text-xs">
-                        <p class="text-gray-300">Manchmal vergessen Programmierer geheime SchlÃ¼ssel direkt im Quellcode (Hardcoded Secrets).</p>
+                        <p class="text-gray-300">Manchmal vergessen Programmierer geheime Schlüssel direkt im Quellcode (Hardcoded Secrets).</p>
 
                         <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
-                            <strong>ðŸŽ¯ Ziel:</strong> Untersuche die Datei <code class="text-emerald-400">server.js</code> im rechten Editor-Fenster und finde den geheimen API-SchlÃ¼ssel.
+                            <strong>🎯 Ziel:</strong> Untersuche die Datei <code class="text-emerald-400">server.js</code> im rechten Editor-Fenster und finde den geheimen API-Schlüssel.
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
                                 <li>cat server.js <span class="text-gray-400 font-sans">- Gibt den Quellcode der JavaScript-Datei im Terminal aus</span></li>
                             </ul>
@@ -873,7 +873,7 @@
             },
             {
                 id: 6,
-                title: "Task 6: Die goldene HintertÃ¼r",
+                title: "Task 6: Die goldene Hintertüre",
                 subtitle: "Logikfehler im Auth-Code",
                 category: "LOGIC FLAWS",
                 xp: 250,
@@ -884,20 +884,20 @@
                         <pre class="bg-black p-2 rounded text-emerald-400 font-mono">if user == "admin" or password == "":\n return "FLAG{...}"</pre>
 
                         <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
-                            <strong>ðŸŽ¯ Ziel:</strong> Analysiere den Python-Code in <code class="text-emerald-400">auth.py</code> und fÃ¼hre ihn im Terminal mit <code class="text-emerald-400">python3 auth.py</code> aus!
+                            <strong>Ziel:</strong> Analysiere den Python-Code in <code class="text-emerald-400">auth.py</code> und führe ihn im Terminal mit <code class="text-emerald-400">python3 auth.py</code> aus!
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
                                 <li>cat auth.py <span class="text-gray-400 font-sans">- Zeigt den fehlerhaften Python-Code an</span></li>
-                                <li>python3 auth.py <span class="text-gray-400 font-sans">- FÃ¼hrt das Skript aus und schlÃ¤gt die HintertÃ¼r an</span></li>
+                                <li>python3 auth.py <span class="text-gray-400 font-sans">- Führt das Skript aus und schlägt die Hintertüre an</span></li>
                             </ul>
                         </div>
                     </div>
                 `,
                 editorContent: `def check_login(user, password):\n if user == 'admin' or password == '':\n return 'FLAG{logic_flaw_bypass_2026}'\n return 'Denied'`,
-                hint: "FÃ¼hre im Terminal 'python3 auth.py' aus.",
+                hint: "Führe im Terminal 'python3 auth.py' aus.",
                 flag: "FLAG{logic_flaw_bypass_2026}",
                 files: {
                     "auth.py": "print('FLAG{logic_flaw_bypass_2026}')"
@@ -920,7 +920,7 @@
                         </div>
 
                         <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
-                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> NÃ¼tzliche Befehle:</strong>
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
                             <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
                                 <li>cat query.sql <span class="text-gray-400 font-sans">- Zeigt das verwundbare SQL-Statement an</span></li>
                             </ul>
