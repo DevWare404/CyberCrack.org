@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberCrack - Cyber Room Simulator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #0b0e14;
+        color: #c3c7d1;
+    }
+
+    .code-font {
+        font-family: 'Fira Code', monospace;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #111827;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #374151;
+        border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #4b5563;
+    }
+
+    /* Terminal Cursor */
+    .terminal-block-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 1.1em;
+        background-color: #a3be8c;
+        border: 1px solid #a3be8c;
+        vertical-align: middle;
+        margin-left: 0;
+        transition: all 0.15s ease;
+    }
+
+    .terminal-block-cursor.unfocused {
+        background-color: transparent !important;
+        border: 1px solid #a3be8c !important;
+    }
+
+    .terminal-block-cursor.underscore {
+        height: 2px !important;
+        margin-top: 0.9em;
+        background-color: #a3be8c !important;
+        border: none !important;
+    }
+
+    .badge-pulse {
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: .5; }
+    }
+
+    /* ==========================================
+       RESPONSIVE GRUNDLAGEN
+    ========================================== */
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    html {
+        width: 100%;
+        min-height: 100%;
+        scroll-behavior: smooth;
+    }
+
+    body {
+        width: 100%;
+        min-width: 0;
+        min-height: 100vh;
+        min-height: 100dvh;
+        margin: 0;
+        overflow-x: hidden;
+    }
+
+    img,
+    video,
+    iframe {
+        max-width: 100%;
+    }
+
+    #taskDetailPane,
+    #editorCodePane,
+    #terminalBody,
+    #terminalHistory {
+        min-width: 0;
+    }
+
+    #taskDetailPane {
+        overflow-wrap: anywhere;
+    }
+
+    #taskDetailPane pre,
+    #taskDetailPane code,
+    #editorCodePane,
+    #terminalHistory {
+        overflow-wrap: anywhere;
+    }
+
+    #editorCodePane {
+        white-space: pre-wrap;
+    }
+
+    #terminalHistory .whitespace-pre-wrap {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    #flagInput,
+    #terminalInput {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* ==========================================
+       TABLETS UND KLEINE LAPTOPS
+       Bis 1024px
+    ========================================== */
+
+    @media (max-width: 1024px) {
+        body > header {
+            gap: 10px;
+            padding: 12px;
+        }
+
+        body > header > div {
+            min-width: 0;
+        }
+
+        body > header > div:last-child {
+            gap: 10px;
+        }
+
+        #taskDetailPane {
+            padding: 16px;
+        }
+
+        #editorCodePane,
+        #terminalBody {
+            padding: 12px;
+        }
+
+        #activeLevelTitle {
+            min-width: 0;
+        }
+    }
+
+    /* ==========================================
+       SMARTPHONES UND KLEINE TABLETS
+       Bis 767px
+    ========================================== */
+
+    @media (max-width: 767px) {
+        body {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Kopfbereich */
+        body > header {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            padding: 12px;
+        }
+
+        body > header > div:first-child {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body > header > div:last-child {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+        }
+
+        #ipAddressBadge {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+        }
+
+        #targetBtn {
+            max-width: 100%;
+            white-space: normal;
+        }
+
+        /* Hauptbereich untereinander */
+        body > div.flex-grow.flex {
+            display: flex;
+            flex: 1 0 auto;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 0;
+            overflow: visible;
+        }
+
+        /* Aufgabenliste oben */
+        body > div.flex-grow.flex > div:first-child {
+            width: 100%;
+            max-width: 100%;
+            min-height: 0;
+            max-height: 32vh;
+            max-height: 32dvh;
+            flex: 0 0 auto;
+            overflow: hidden;
+            border-right: none;
+            border-bottom: 1px solid #232a35;
+        }
+
+        #tasksContainer {
+            min-height: 0;
+            max-height: calc(32vh - 70px);
+            max-height: calc(32dvh - 70px);
+            overflow-x: hidden;
+            overflow-y: auto;
+            overscroll-behavior: contain;
+        }
+
+        /* Rechter Arbeitsbereich */
+        body > div.flex-grow.flex > div.flex-grow {
+            width: 100%;
+            min-width: 0;
+            min-height: 0;
+            flex: 1 0 auto;
+            overflow: visible;
+        }
+
+        /* Beschreibung und Editor untereinander */
+        body > div.flex-grow.flex
+        > div.flex-grow
+        > div.flex-1.flex.flex-col {
+            display: flex;
+            flex-direction: column;
+            flex: 0 0 auto;
+            min-height: 0;
+            overflow: visible;
+        }
+
+        /* Aufgabenbeschreibung */
+        #taskDetailPane {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            padding: 14px;
+            overflow: visible;
+            border-right: none;
+            border-bottom: 1px solid #232a35;
+        }
+
+        /* Code-Editor */
+        body > div.flex-grow.flex
+        > div.flex-grow
+        > div.flex-1.flex.flex-col
+        > div.w-full.md\:w-1\/2 {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            min-height: 220px;
+            max-height: 40vh;
+            max-height: 40dvh;
+            flex: 0 0 auto;
+        }
+
+        #editorCodePane {
+            min-height: 160px;
+            max-height: 34vh;
+            max-height: 34dvh;
+            padding: 12px;
+            overflow: auto;
+            font-size: 11px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        /* Terminal */
+        body > div.flex-grow.flex
+        > div.flex-grow
+        > div.h-64 {
+            height: auto;
+            min-height: 280px;
+            flex: 0 0 auto;
+        }
+
+        #terminalBody {
+            min-height: 220px;
+            max-height: 55vh;
+            max-height: 55dvh;
+            padding: 12px;
+            overflow: auto;
+            font-size: 12px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        #terminalBody .flex.items-center {
+            min-width: 0;
+        }
+
+        #termPrompt {
+            flex-shrink: 0;
+            font-size: 11px;
+        }
+
+        #typedTextMirror {
+            min-width: 0;
+            overflow-wrap: anywhere;
+            white-space: pre-wrap;
+        }
+
+        /* Kopfzeile des Editors und Terminal */
+        #activeLevelTitle {
+            min-width: 0;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        /* Flag-Eingabe */
+        #taskDetailPane .flex.gap-2:has(#flagInput) {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        #flagInput {
+            flex: 1 1 140px;
+            width: 100%;
+        }
+
+        /* Lange Befehle und Hinweise */
+        #taskDetailPane pre,
+        #taskDetailPane code,
+        #editorCodePane,
+        #terminalHistory {
+            overflow-wrap: anywhere;
+        }
+
+        /* Touch-Geräte */
+        button {
+            min-height: 34px;
+        }
+    }
+
+    /* ==========================================
+       SEHR KLEINE SMARTPHONES
+       Bis 400px
+    ========================================== */
+
+    @media (max-width: 400px) {
+        body {
+            font-size: 12px;
+        }
+
+        body > header {
+            padding: 10px;
+        }
+
+        body > header .text-lg {
+            font-size: 16px;
+        }
+
+        body > header > div:last-child {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        #targetBtn {
+            width: 100%;
+            justify-content: center;
+        }
+
+        #taskDetailPane {
+            padding: 10px;
+        }
+
+        #editorCodePane,
+        #terminalBody {
+            padding: 10px;
+            font-size: 11px;
+        }
+
+        #termPrompt {
+            font-size: 10px;
+        }
+
+        #taskDetailPane .mt-6 {
+            padding: 10px;
+        }
+
+        #taskDetailPane button {
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+
+        #tasksContainer > div {
+            padding: 10px;
+        }
+    }
+
+    /* ==========================================
+       GROSSE BILDSCHIRME
+       Ab 1280px
+    ========================================== */
+
+    @media (min-width: 1280px) {
+        body > div.flex-grow.flex > div:first-child {
+            width: 320px;
+        }
+
+        #taskDetailPane {
+            padding: 24px;
+        }
+
+        #editorCodePane {
+            font-size: 13px;
+            line-height: 1.8;
+        }
+    }
+
+    /* ==========================================
+       LAPTOPS MIT GERINGER BILDSCHIRMHÖHE
+    ========================================== */
+
+    @media (min-width: 768px) and (max-height: 700px) {
+        body {
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
+        body > div.flex-grow.flex {
+            flex: 1 1 0%;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        body > div.flex-grow.flex > div.flex-grow {
+            min-height: 0;
+        }
+
+        body > div.flex-grow.flex
+        > div.flex-grow
+        > div.h-64 {
+            height: 34vh;
+            min-height: 150px;
+        }
+
+        #taskDetailPane,
+        #editorCodePane,
+        #terminalBody {
+            min-height: 0;
+            overflow-y: auto;
+        }
+    }
+
+    /* ==========================================
+       BARRIEREARM: ANIMATIONEN REDUZIEREN
+    ========================================== */
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            scroll-behavior: auto !important;
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+
+    #completionModal:not([hidden]) {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: grid;
+        place-items: center;
+        overflow-y: auto;
+        padding: 20px;
+        isolation: isolate;
+    }
+
+    #completionModal::before {
+        position: fixed;
+        z-index: -1;
+        inset: 0;
+        background: rgb(3 5 9 / 78%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        content: "";
+    }
+
+    #completionConfetti {
+        position: fixed;
+        z-index: 0;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+    }
+
+    .completion-confetti-piece {
+        position: absolute;
+        bottom: -12px;
+        width: 9px;
+        height: 14px;
+        border-radius: 2px;
+        animation: completion-confetti-burst var(--duration) cubic-bezier(.12, .7, .25, 1) var(--delay) both;
+    }
+
+    @keyframes completion-confetti-burst {
+        0% {
+            opacity: 1;
+            transform: translate(0, 0) rotate(0deg) scale(.8);
+        }
+        70% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+            transform: translate(var(--travel-x), var(--travel-y)) rotate(var(--spin)) scale(.5);
+        }
+    }
+
+    #completionDialog {
+        position: relative;
+        z-index: 1;
+        width: min(100%, 560px);
+        max-height: calc(100dvh - 40px);
+        overflow-y: auto;
+        border: 1px solid rgb(248 113 113 / 35%);
+        border-radius: 20px;
+        background: linear-gradient(145deg, #171d27, #0d1118);
+        padding: clamp(22px, 5vw, 36px);
+        box-shadow: 0 24px 80px rgb(0 0 0 / 60%);
+        text-align: center;
+    }
+
+    #completionWarning {
+        border: 2px dashed #ef4444;
+        border-radius: 12px;
+        background: rgb(127 29 29 / 18%);
+        color: #fca5a5;
+        font-size: .9rem;
+        font-style: italic;
+        font-weight: 800;
+        line-height: 1.6;
+        padding: 14px;
+        text-align: left;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .completion-confetti-piece {
+            animation: none;
+            display: none;
+        }
+    }
+</style>
+
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-sm">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-[#151a21] border-b border-[#232a35] px-4 py-2.5 flex items-center justify-between shrink-0 select-none">
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 font-bold text-lg text-white">
+                <i class="fa-solid fa-shield-halved text-red-500 text-xl"></i>
+                <span>CyberCrack <span class="text-red-500 font-extrabold">ROOM</span></span>
+            </div>
+            <span class="bg-red-950/80 text-red-400 border border-red-800/50 text-xs px-2.5 py-0.5 rounded font-mono font-medium">Classroom Box v2.5</span>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <!-- Overall Progress Bar -->
+            <div class="hidden md:flex items-center gap-3 w-56">
+                <div class="text-xs font-semibold text-gray-400">Fortschritt:</div>
+                <div class="flex-grow bg-slate-800 h-2 rounded-full overflow-hidden border border-slate-700/50">
+                    <div id="overallProgress" class="bg-gradient-to-r from-red-600 to-emerald-500 h-full w-0 transition-all duration-500"></div>
+                </div>
+                <span id="progressText" class="text-xs font-mono text-gray-300 w-8">0%</span>
+            </div>
+
+            <!-- XP Points Badge -->
+            <div class="bg-[#0e1217] border border-[#232a35] px-3 py-1 rounded flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-amber-400 text-xs"></i>
+                <span class="text-xs text-gray-400">Punkte:</span>
+                <span id="scoreBadge" class="text-xs font-bold text-amber-400 font-mono">0 XP</span>
+            </div>
+
+            <!-- Target Machine Toggle Button -->
+            <div class="flex items-center gap-2">
+                <span id="ipAddressBadge" class="hidden font-mono text-xs bg-emerald-950 text-emerald-400 border border-emerald-800/60 px-2.5 py-1 rounded flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
+                    10.10.142.88
+                </span>
+                <button id="targetBtn" onclick="toggleMachine()" class="bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-3 py-1.5 rounded flex items-center gap-2 transition">
+                    <i class="fa-solid fa-power-off"></i>
+                    <span id="targetStatusText">Target Starten</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <div class="flex-grow flex overflow-hidden">
+
+        <!-- LEFT SIDEBAR: Tasks Navigator -->
+        <div class="w-80 md:w-96 bg-[#11151c] border-r border-[#232a35] flex flex-col shrink-0">
+            <div class="p-4 border-b border-[#232a35] bg-[#151a21] flex justify-between items-center">
+                <div>
+                    <h1 class="text-white font-bold text-base flex items-center gap-2">
+                        <i class="fa-solid fa-skull text-red-500"></i> Cyber Quest 2026
+                    </h1>
+                    <p id="taskCount" class="text-xs text-gray-400 mt-0.5"></p>
+                </div>
+            </div>
+
+            <!-- Task Items List -->
+            <div class="flex-grow overflow-y-auto divide-y divide-[#1e2530]" id="tasksContainer">
+                <!-- Task Items injected dynamically by JavaScript -->
+            </div>
+        </div>
+
+        <!-- RIGHT WORKSPACE: Simulated VS Code & Interactive Terminal -->
+        <div class="flex-grow flex flex-col bg-[#0b0e14] min-w-0">
+
+            <!-- VS Code / Workbench Header -->
+            <div class="bg-[#151a21] border-b border-[#232a35] px-4 py-2 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="bg-blue-600/20 text-blue-400 border border-blue-500/30 text-xs px-2 py-0.5 rounded font-mono flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-code"></i> VS Code Workstation
+                    </span>
+                    <span id="activeLevelTitle" class="text-gray-300 font-semibold text-xs truncate">Task 0: Vorbereitung (Getting Started)</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-gray-400 shrink-0">
+                    <button onclick="clearTerminal()" class="hover:text-white px-2 py-1 rounded bg-[#232a35] flex items-center gap-1 transition">
+                        <i class="fa-solid fa-trash-can text-gray-400"></i> Terminal Clear
+                    </button>
+                    <button onclick="resetWorkspace()" class="hover:text-white px-2 py-1 rounded bg-[#232a35] flex items-center gap-1 transition">
+                        <i class="fa-solid fa-rotate-right text-gray-400"></i> Reset Level
+                    </button>
+                </div>
+            </div>
+
+            <!-- Workspace Upper View: Briefing Pane & Code File Inspector -->
+            <div class="flex-1 flex flex-col md:flex-row overflow-hidden border-b border-[#232a35]">
+
+                <!-- Left Pane: Task Details & Instructions -->
+                <div class="w-full md:w-1/2 p-5 overflow-y-auto bg-[#11151c] border-r border-[#232a35]" id="taskDetailPane">
+                    <!-- Task Instructions rendered dynamically -->
+                </div>
+
+                <!-- Right Pane: File Code Editor / ReadOnly Target Inspector -->
+                <div class="w-full md:w-1/2 flex flex-col bg-[#0e1217]">
+                    <div class="bg-[#151a21] px-4 py-1.5 text-xs font-mono text-gray-400 border-b border-[#232a35] flex items-center justify-between shrink-0 select-none">
+                        <span id="editorFileName" class="flex items-center gap-2">
+                            <i class="fa-regular fa-file-code text-blue-400"></i> WELCOME.md
+                        </span>
+                        <span class="text-gray-500">ReadOnly Target Inspector</span>
+                    </div>
+                    <div class="p-4 flex-grow overflow-y-auto font-mono text-xs text-gray-300 leading-relaxed code-font bg-[#090c10]" id="editorCodePane">
+                        <!-- Code content rendered dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workspace Lower View: Integrated Terminal -->
+            <div class="h-64 md:h-72 bg-[#090c10] flex flex-col shrink-0 border-t border-[#232a35]">
+                <div class="bg-[#151a21] px-4 py-1.5 text-xs text-gray-400 flex items-center justify-between border-b border-[#232a35] select-none shrink-0">
+                    <div class="flex items-center gap-2 font-mono">
+                        <i class="fa-solid fa-terminal text-emerald-400"></i>
+                        <span class="text-gray-200 font-bold">CyberCrack Kali Shell (bash)</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-xs">
+                        <span class="text-gray-500">Type <code class="text-emerald-400 font-bold">help</code> for commands</span>
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 badge-pulse"></span>
+                    </div>
+                </div>
+
+                <!-- Terminal Output Body -->
+                <div class="flex-grow p-4 overflow-y-auto font-mono text-xs code-font text-gray-300 leading-relaxed cursor-text" id="terminalBody" onclick="handleTerminalClick(event)">
+                    <div id="welcomeMessageContainer" class="text-gray-400 mb-2">
+                        Willkommen auf deiner Angriffs-Station. Verbinde dich zuerst mit dem Zielserver (Target)!
+                    </div>
+
+                    <!-- Dynamic Command History -->
+                    <div id="terminalHistory"></div>
+
+                    <!-- Live Command Line Prompt & Non-Blinking Block Cursor -->
+                    <div class="flex items-center mt-1">
+                        <span class="text-emerald-400 font-bold mr-1 shrink-0" id="termPrompt">student@kali:~$</span>
+                        <div class="flex-grow flex items-center relative min-w-0">
+                            <span id="typedTextMirror" class="text-white font-mono text-xs whitespace-pre"></span>
+                            <span id="customCursor" class="terminal-block-cursor shrink-0"></span>
+                            <input type="text" id="terminalInput" class="absolute inset-0 opacity-0 bg-transparent border-none outline-none text-transparent font-mono text-xs p-0 m-0 w-full z-10" autofocus spellcheck="false" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="completionModal" hidden role="dialog" aria-modal="true" aria-labelledby="completionTitle">
+        <div id="completionConfetti" aria-hidden="true"></div>
+        <section id="completionDialog" tabindex="-1">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/15 text-3xl text-emerald-300">
+                <i class="fa-solid fa-trophy" aria-hidden="true"></i>
+            </div>
+            <h2 id="completionTitle" class="mb-3 text-2xl font-extrabold text-white sm:text-3xl">Du hast es geschafft!</h2>
+            <p class="mb-6 text-sm leading-relaxed text-gray-300 sm:text-base">
+                Super gemacht! Du hast alle Aufgaben gemeistert und deine ersten Schritte in die Welt des ethischen Hackings erfolgreich abgeschlossen.
+                Bleib neugierig, übe verantwortungsvoll und mach weiter so!
+            </p>
+            <div id="completionWarning" class="mb-6">
+                <span class="mb-1 block text-base uppercase tracking-wide">Wichtiger Hinweis</span>
+                Viele Befehle in diesem CyberCrack-Raum sind simuliert. Ähnliche Befehle können auf echten Systemen Änderungen verursachen.
+                Führe sie außerhalb dieser Simulation nur in einer ausdrücklich autorisierten Übungsumgebung aus.
+            </div>
+            <button id="completionCloseButton" type="button" class="rounded-lg bg-red-600 px-5 py-2.5 font-bold text-white transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 focus:ring-offset-gray-900">
+                Weiter üben
+            </button>
+        </section>
+    </div>
+
+    <script>
+        // --- Game State Variables ---
+        let currentTaskIndex = 0;
+        let completedTasks = new Set();
+        let revealedHints = new Set();
+        let machineActive = false;
+        let isConnectedToTarget = false;
+        let userXP = 0;
+        let cursorFocusTimer = null;
+        let underscoreTimer = null;
+        let previousBodyOverflow = '';
+
+        // --- Aufgabenliste ---
+        const tasks = [
+            {
+                id: 0,
+                title: "Task 0: Vorbereitung",
+                subtitle: "Getting Started",
+                category: "ONBOARDING",
+                xp: 50,
+                path: "~/welcome",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <div class="bg-blue-950/40 border border-blue-800/50 p-3 rounded text-blue-200">
+                            <h3 class="font-bold text-sm text-blue-300 mb-1">👋 Willkommen beim CyberCrack Simulator!</h3>
+                            <p>Bevor du die Hack-The-Box-Rätsel lösen kannst, musst du zuerst deinen Zielserver (Target Machine) starten und dich über die Konsole verbinden.</p>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-start gap-3 bg-[#151a21] p-3 rounded border border-[#232a35]">
+                                <span class="bg-red-500/20 text-red-400 font-bold rounded-full w-6 h-6 flex items-center justify-center shrink-0">1</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-200">Zielserver starten</h4>
+                                    <p class="text-gray-400 mt-0.5">Klicke oben rechts auf den roten Button <span class="text-red-400 font-bold"><i class="fa-solid fa-power-off"></i> Target Starten</span>. Die IP-Adresse <code class="text-emerald-400">10.10.142.88</code> wird freigeschaltet.</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 bg-[#151a21] p-3 rounded border border-[#232a35]">
+                                <span class="bg-red-500/20 text-red-400 font-bold rounded-full w-6 h-6 flex items-center justify-center shrink-0">2</span>
+                                <div>
+                                    <h4 class="font-bold text-gray-200">Mit dem Server verbinden</h4>
+                                    <p class="text-gray-400 mt-0.5">Gib unten im Terminal den Befehl <code class="text-emerald-400 bg-slate-800 px-1 py-0.5 rounded">connect 10.10.142.88</code> ein.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Verbinde dich mit dem Server. Sobald die Verbindung steht, erhältst du deine allererste Flagge als Bestätigung!
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>connect 10.10.142.88 <span class="text-gray-400 font-sans">- Verbindet dich mit dem Zielserver</span></li>
+                                <li>help <span class="text-gray-400 font-sans">- Zeigt alle verfügbaren Terminal-Befehle an</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `// CyberCrack Onboarding Protocol\nStatus: Waiting for Target Machine startup...\nIP: 10.10.142.88\n\nInstructions:\n1. Click 'Target Starten' top-right.\n2. In terminal below, type: connect 10.10.142.88`,
+                hint: "Starte zuerst das Target oben rechts, tippe dann unten im Terminal: connect 10.10.142.88",
+                flag: "FLAG{target_connected_2026}",
+                files: {
+                    "WELCOME.md": "CyberCrack Server Ready! Type 'connect 10.10.142.88' in terminal."
+                }
+            },
+            {
+                id: 1,
+                title: "Task 1: Der blinde Passagier",
+                subtitle: "Versteckte Dateien finden",
+                category: "LINUX RECONNAISSANCE",
+                xp: 100,
+                path: "~/level_01",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">In Linux-Systemen beginnen versteckte Dateien mit einem Punkt (z. B. <code class="text-amber-400">.geheimnis.txt</code>). Ein normaler Ordner-Befehl wie <code class="text-emerald-400">ls</code> zeigt sie nicht an.</p>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Nutze den erweiterten Ordner-Befehl <code class="text-emerald-400 font-bold">ls -la</code> im Terminal, um versteckte Dateien anzuzeigen, und lies die Datei mit <code class="text-emerald-400 font-bold">cat</code> aus.
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>ls -la <span class="text-gray-400 font-sans">- Zeigt alle Dateien inkl. versteckten (.dateiname) an</span></li>
+                                <li>cat .secret_flag.txt <span class="text-gray-400 font-sans">- Liest den Inhalt der versteckten Datei aus</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `# Ordnerinhalt level_01\nnotes.txt (Sichtbar)\n.secret_flag.txt (Versteckt - nutze 'ls -la')`,
+                hint: "Tippe im Terminal 'ls -la' gefolgt von 'cat .secret_flag.txt'",
+                flag: "FLAG{ls_la_master_2026}",
+                files: {
+                    "notes.txt": "Öffentliche Notizen: Keine Auffälligkeiten.",
+                    ".secret_flag.txt": "FLAG{ls_la_master_2026}"
+                }
+            },
+            {
+                id: 2,
+                title: "Task 2: Der verschlüsselte Funkspruch",
+                subtitle: "Base64 Text dekodieren",
+                category: "CRYPTOGRAPHY & ENCODING",
+                xp: 150,
+                path: "~/level_02",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Wir haben einen abgefangenen Text abgelegt. Er sieht unleserlich aus und endet oft mit <code class="text-amber-400">==</code> (Base64-Kodierung).</p>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Lies die Datei <code class="text-emerald-400">intercepted.log</code> und dekodiere die Zeile im Terminal mit <code class="text-emerald-400">base64 -d</code>.
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>cat intercepted.log <span class="text-gray-400 font-sans">- Liest die verschlüsselte Log-Datei aus</span></li>
+                                <li>cat intercepted.log | base64 -d <span class="text-gray-400 font-sans">- Leitet den Inhalt an den Base64-Decoder weiter</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `LOG ENTRY #402:\nRkxBR3tiYXNlNjRfZGVjb2RlZF9zdWNjZXNzZnVsbHl9`,
+                hint: "Nutze im Terminal: cat intercepted.log | base64 -d",
+                flag: "FLAG{base64_decoded_successfully}",
+                files: {
+                    "intercepted.log": "RkxBR3tiYXNlNjRfZGVjb2RlZF9zdWNjZXNzZnVsbHl9"
+                }
+            },
+            {
+                id: 3,
+                title: "Task 3: Der digitale Mülleimer",
+                subtitle: "Backup- & Alt-Dateien",
+                category: "BACKUP & SECRETS",
+                xp: 150,
+                path: "~/level_03",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Entwickler vergessen oft alte Sicherungskopien (wie <code class="text-amber-400">config.php.bak</code> oder <code class="text-amber-400">.old</code>) auf dem Server.</p>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Liste alle Dateien im Verzeichnis auf und finde das verbliebene Passwort in der Backup-Datei.
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>ls -la <span class="text-gray-400 font-sans">- Sucht nach Backup-Dateien wie .bak oder .old</span></li>
+                                <li>cat config.php.bak <span class="text-gray-400 font-sans">- Öffnet die alte Sicherungsdatei</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `// config.php\n$db_pass = '******'; // Redacted in production\n\n// Backup File exists: config.php.bak`,
+                hint: "Nutze 'ls -la' und lies 'cat config.php.bak'",
+                flag: "FLAG{backup_files_are_dangerous}",
+                files: {
+                    "config.php": "$db_pass = '******'; // Redacted",
+                    "config.php.bak": "$db_pass = 'FLAG{backup_files_are_dangerous}';"
+                }
+            },
+            {
+                id: 4,
+                title: "Task 4: Das schwache Schloss",
+                subtitle: "MD5 Passwort Hash knacken",
+                category: "PASSWORD CRACKING",
+                xp: 200,
+                path: "~/level_04",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Passwörter werden meist als Prüfsumme (Hash) gespeichert. In <code class="text-amber-400">hash.txt</code> liegt ein MD5-Hash:</p>
+                        <code class="block bg-black p-2 rounded text-amber-300 font-mono">21232f297a57a5a743894a0e4a801fc3</code>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Welches Standard-Wort für Systemverwalter ergibt diesen Hash? Gib die Flagge als <code class="text-emerald-400">FLAG{wort}</code> ein.
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>cat hash.txt <span class="text-gray-400 font-sans">- zeigt den verschlüsselten MD5-Hash an</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `HASH: 21232f297a57a5a743894a0e4a801fc3\nWordlist hint: Standard English administrator term.`,
+                hint: "Der Hash gehört zum englischen Wort 'admin'. Bilde FLAG{admin}",
+                flag: "FLAG{admin}",
+                files: {
+                    "hash.txt": "21232f297a57a5a743894a0e4a801fc3"
+                }
+            },
+            {
+                id: 5,
+                title: "Task 5: Das faule Ei im Quellcode",
+                subtitle: "Hartkodierte Passwörter",
+                category: "CODE REVIEW",
+                xp: 200,
+                path: "~/level_05",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Manchmal vergessen Programmierer geheime Schlüssel direkt im Quellcode (Hardcoded Secrets).</p>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Untersuche die Datei <code class="text-emerald-400">server.js</code> im rechten Editor-Fenster und finde den geheimen API-Schlüssel.
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>cat server.js <span class="text-gray-400 font-sans">- Gibt den Quellcode der JavaScript-Datei im Terminal aus</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `const express = require('express');\nconst app = express();\n\n// TODO: Remove secret key before release!\nconst API_SECRET = "FLAG{never_hardcode_secrets}";\n\napp.get('/api', (req, res) => res.send("Active"));`,
+                hint: "Lies das Javascript-File 'server.js' im Editor oder tippe 'cat server.js'",
+                flag: "FLAG{never_hardcode_secrets}",
+                files: {
+                    "server.js": "const API_SECRET = \"FLAG{never_hardcode_secrets}\";"
+                }
+            },
+            {
+                id: 6,
+                title: "Task 6: Die goldene Hintertüre",
+                subtitle: "Logikfehler im Auth-Code",
+                category: "LOGIC FLAWS",
+                xp: 250,
+                path: "~/level_06",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Ein Logikfehler im Quellcode erlaubt die Umgehung der Anmeldung:</p>
+                        <pre class="bg-black p-2 rounded text-emerald-400 font-mono">if user == "admin" or password == "":\n return "FLAG{...}"</pre>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Analysiere den Python-Code in <code class="text-emerald-400">auth.py</code> und führe ihn im Terminal mit <code class="text-emerald-400">python3 auth.py</code> aus!
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>cat auth.py <span class="text-gray-400 font-sans">- Zeigt den fehlerhaften Python-Code an</span></li>
+                                <li>python3 auth.py <span class="text-gray-400 font-sans">- Führt das Skript aus und schlägt die Hintertüre an</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `def check_login(user, password):\n if user == 'admin' or password == '':\n return 'FLAG{logic_flaw_bypass_2026}'\n return 'Denied'`,
+                hint: "Führe im Terminal 'python3 auth.py' aus.",
+                flag: "FLAG{logic_flaw_bypass_2026}",
+                files: {
+                    "auth.py": "print('FLAG{logic_flaw_bypass_2026}')"
+                }
+            },
+            {
+                id: 7,
+                title: "Task 7: Die offene Schleuse",
+                subtitle: "SQL Injection Syntax",
+                category: "WEB EXPLOITATION",
+                xp: 250,
+                path: "~/level_07",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Eine unsichere Datenbank-Abfrage verbindet Strings direkt mit der Eingabe:</p>
+                        <code class="block bg-black p-2 rounded text-amber-300 font-mono">SELECT * FROM users WHERE username = 'EINGABE'</code>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Welcher SQL-Injection-Klassiker setzt die Abfrage immer auf Wahr (TRUE)? Trage die Flagge <code class="text-emerald-400">FLAG{' OR '1'='1}</code> ein.
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>cat query.sql <span class="text-gray-400 font-sans">- Zeigt das verwundbare SQL-Statement an</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `-- query.sql\nSELECT * FROM users WHERE username = 'INPUT';\n-- Classic Injection: ' OR '1'='1`,
+                hint: "Gib exakt diese Flagge ein: FLAG{' OR '1'='1}",
+                flag: "FLAG{' OR '1'='1}",
+                files: {
+                    "query.sql": "SELECT * FROM users WHERE username = 'INPUT';"
+                }
+            },
+            {
+                id: 8,
+                title: "Task 8: Der System-Befehl",
+                subtitle: "Command Injection",
+                category: "SYSTEM EXPLOITATION",
+                xp: 300,
+                path: "~/level_08",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Ein Ping-Dienst auf dem Server führt Eingaben direkt auf der Systemkonsole aus:</p>
+                        <code class="block bg-black p-2 rounded text-emerald-400 font-mono">system("ping -c 1 " + userInput);</code>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Mit welchem Trennzeichen (z. B. Semikolon <code class="text-amber-400">;</code>) lassen sich zweite Befehle anhängen?
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>cat ping.py <span class="text-gray-400 font-sans">- Liest die verwundbare System-Funktion aus</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `# ping.py\nimport os\nos.system('ping -c 1 ' + user_input)`,
+                hint: "Die Antwort lautet: FLAG{semicolon_command_chaining}",
+                flag: "FLAG{semicolon_command_chaining}",
+                files: {
+                    "ping.py": "import os\nos.system('ping -c 1 ' + user_input)"
+                }
+            },
+            {
+                id: 9,
+                title: "Task 9: Das unsichere API-Tor",
+                subtitle: "Unsecured Direct Object Reference (IDOR)",
+                category: "API SECURITY",
+                xp: 300,
+                path: "~/level_09",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Eine Web-Schnittstelle liefert Nutzerdaten über IDs ab: <code class="text-amber-400">/api/user?id=105</code>.</p>
+
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Der Administrator hat ID <code class="text-emerald-400">1</code>. Führe im Terminal den Befehl <code class="text-emerald-400">curl /api/user?id=1</code> aus!
+                        </div>
+
+                        <div class="bg-slate-900/60 border border-slate-800 p-3 rounded text-gray-300">
+                            <strong class="text-amber-400 font-bold flex items-center gap-1.5 mb-1.5"><i class="fa-solid fa-terminal"></i> Nützliche Befehle:</strong>
+                            <ul class="list-disc list-inside space-y-1 font-mono text-[11px] text-emerald-400">
+                                <li>curl /api/user?id=1 <span class="text-gray-400 font-sans">- Fragt den gesicherten Admin-Account bei der API ab</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                `,
+                editorContent: `API Endpoint: /api/user?id={id}\nTry querying Admin account with id=1 using 'curl'`,
+                hint: "Tippe im Terminal: curl /api/user?id=1",
+                flag: "FLAG{idor_insecure_direct_object_ref}",
+                files: {
+                    "/api/user?id=1": '{"id": 1, "role": "admin", "flag": "FLAG{idor_insecure_direct_object_ref}"}'
+                }
+            },
+            {
+                id: 10,
+                title: "Level 10: Master Decryption",
+                type: "crypto",
+                target: "CEO Vault",
+                description: "Kombiniere Caesar-Cipher (Shift 3) mit Base64 Dekodierung.",
+                hint: "1. Geheimtext mit Shift 3 nach links verschieben -> 2. Das Ergebnis mit Base64 dekodieren!",
+                task: "Dekodiere folgenden doppelt verschlüsselten String: 'V1ZaU1RtVkpSVEpPZW14V1YwVjNPUT09'",
+                answer: "CYBERMASTER2025",
+                subtitle: "Caesar + Base64 Combo",
+                category: "ADVANCED CRYPTO",
+                xp: 350,
+                path: "~/level_10",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Dekodiere den doppelt verschlüsselten String in vault.enc: <code class="text-amber-400">V1ZaU1RtVkpSVEpPZW14V1YwVjNPUT09</code></p>
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Caesar-Cipher mit Shift 3 rückgängig machen und dann den Base64-String dekodieren.
+                        </div>
+                    </div>
+                `,
+                editorContent: `ENCRYPTED VAULT KEY:\nV1ZaU1RtVkpSVEpPZW14V1YwVjNPUT09`,
+                flag: "FLAG{CYBERMASTER2025}",
+                files: {
+                    "vault.enc": "V1ZaU1RtVkpSVEpPZW14V1YwVjNPUT09"
+                }
+            },
+            {
+                id: 11,
+                title: "Level 11: Database Breach (SQL Injection)",
+                type: "sql",
+                target: "User Database",
+                description: "Ein fehlerhaftes Login-Formular prüft Eingaben nicht ordnungsgemäß.",
+                hint: "Gib eine SQL-Bedingung ein, die immer TRUE (wahr) ergibt, wie z.B. ' OR '1'='1",
+                task: "Bringe die Datenbankschranke zum Einsturz mit einem SQL-Injection Standard-Bypass!",
+                answer: "' OR '1'='1",
+                subtitle: "Authentication Bypass",
+                category: "SQL INJECTION",
+                xp: 400,
+                path: "~/level_11",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Bypass the login form by supplying a condition that evaluates to TRUE.</p>
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Nutze SQL-Injection Syntax <code class="text-emerald-400">' OR '1'='1</code>.
+                        </div>
+                    </div>
+                `,
+                editorContent: `LOGIN QUERY:\nSELECT * FROM admin WHERE user='' AND pass=''`,
+                flag: "FLAG{' OR '1'='1}",
+                files: {
+                    "login.sql": "SELECT * FROM admin WHERE pass='';"
+                }
+            },
+            {
+                id: 12,
+                title: "Level 12: Root Command Execution",
+                type: "terminal",
+                target: "Mainframe Core",
+                description: "Das finale System verlangt nach dem Systembefehl zum Freischalten der Root-Rechte.",
+                hint: "In Linux/Terminal-Systemen wird der Befehl 'sudo su' oder 'chmod 777 /' verwendet, aber tippe hier genau: 'sudo unlock --root'",
+                task: "Gib den finalen Root-Freischaltbefehl ein, um das Gesamtsystem vollständig zu Übernehmen!",
+                answer: "sudo unlock --root",
+                subtitle: "Privilege Escalation",
+                category: "ROOT ACCESS",
+                xp: 500,
+                path: "~/root",
+                instructions: `
+                    <div class="space-y-4 text-xs">
+                        <p class="text-gray-300">Schalte den Root-Zugriff im System frei.</p>
+                        <div class="bg-emerald-950/30 border border-emerald-800/40 p-3 rounded text-emerald-300">
+                            <strong>🎯 Ziel:</strong> Führe <code class="text-emerald-400">sudo unlock --root</code> aus.
+                        </div>
+                    </div>
+                `,
+                editorContent: `# Privilege Escalation System\nStatus: LOCKED`,
+                flag: "FLAG{root_access_granted_2026}",
+                files: {
+                    "root_access.sh": "sudo unlock --root"
+                }
+            }
+        ];
+
+        let currentLevelIndex = 0;
+
+        // Render Tasks List in Left Sidebar
+        function renderTasksList() {
+            const container = document.getElementById('tasksContainer');
+            if (!container) return;
+
+            const taskCount = document.getElementById('taskCount');
+            if (taskCount) {
+                taskCount.innerText = `${tasks.length} Aufgaben für die Klasse`;
+            }
+
+            container.innerHTML = '';
+
+            tasks.forEach((task, idx) => {
+                const isCompleted = completedTasks.has(task.id);
+                const isActive = idx === currentTaskIndex;
+
+                const taskEl = document.createElement('div');
+                taskEl.className = `p-3.5 cursor-pointer transition flex items-center justify-between border-l-4 ${
+                    isActive 
+                        ? 'bg-[#1a212b] border-red-500' 
+                        : 'border-transparent hover:bg-[#151a21]'
+                }`;
+                taskEl.onclick = () => selectTask(idx);
+
+                taskEl.innerHTML = `
+                    <div class="min-w-0 pr-2">
+                        <div class="text-[10px] font-mono text-gray-500 uppercase tracking-wider">${task.category}</div>
+                        <div class="text-xs font-bold ${isActive ? 'text-white' : 'text-gray-300'} truncate mt-0.5">${task.title}</div>
+                        <div class="text-[11px] text-gray-400 flex items-center gap-2 mt-1">
+                            <span>Aufgabe ${idx + 1}/${tasks.length}</span>
+                            <span>-</span>
+                            <span class="text-gray-500 truncate">${task.subtitle}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end gap-1 shrink-0">
+                        <span class="text-[10px] font-mono text-amber-400 font-bold">${task.xp} XP</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded font-mono font-bold ${
+                            isCompleted 
+                                ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60' 
+                                : 'bg-slate-800 text-gray-400 border border-slate-700/50'
+                        }">
+                            ${isCompleted ? 'SOLVED' : 'OPEN'}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(taskEl);
+            });
+        }
+
+        // Select & Render Specific Task
+        function selectTask(index) {
+            currentTaskIndex = index;
+            const task = tasks[index];
+
+            renderTasksList();
+
+            // Update Workbench Header Title
+            document.getElementById('activeLevelTitle').innerText = `${task.title} (${task.subtitle})`;
+            updatePromptDisplay();
+
+            // Render Left Task Instructions Pane
+            const isCompleted = completedTasks.has(task.id);
+            const taskPane = document.getElementById('taskDetailPane');
+            taskPane.innerHTML = `
+                ${task.instructions}
+                
+                <!-- Flag Answer Submission Box -->
+                <div class="mt-6 bg-[#151a21] border border-[#232a35] rounded-lg p-4">
+                    <label class="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-flag text-red-500"></i> Answer Submission (Flagge Eintragen)
+                    </label>
+                    <div class="flex gap-2">
+                        <input type="text" id="flagInput" placeholder="FLAG{...}" 
+                            value="${isCompleted ? task.flag : ''}"
+                            ${isCompleted ? 'disabled' : ''}
+                            class="flex-grow bg-[#0b0e14] border border-[#232a35] text-white px-3 py-2 rounded text-xs font-mono focus:outline-none focus:border-red-500">
+                        <button onclick="submitFlag()" 
+                            ${isCompleted ? 'disabled' : ''}
+                            class="${isCompleted ? 'bg-emerald-700 opacity-60 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'} text-white font-bold px-4 py-2 rounded text-xs transition flex items-center gap-1.5 shrink-0">
+                            <i class="fa-solid ${isCompleted ? 'fa-check' : 'fa-paper-plane'}"></i>
+                            <span>${isCompleted ? 'Gelöst' : 'Submit'}</span>
+                        </button>
+                    </div>
+                    <div id="flagFeedback" class="mt-2 text-xs">${isCompleted
+                        ? `<span class="text-emerald-400 font-bold flex items-center gap-1 mt-1"><i class="fa-solid fa-circle-check"></i> Aufgabe abgeschlossen! ${task.xp} XP erhalten.</span>`
+                        : ''}</div>
+                </div>
+
+                <!-- Hint Disclosure Accordion -->
+                <div class="mt-4">
+                    <button onclick="toggleHint(${task.id})" class="text-xs text-amber-400 hover:underline flex items-center gap-1.5 font-medium">
+                        <i class="fa-regular fa-lightbulb"></i>
+                        <span>${revealedHints.has(task.id) ? 'Hinweis ausblenden' : 'Brauchst du einen Hinweis?'}</span>
+                    </button>
+                    <div id="hintBox" class="${revealedHints.has(task.id) ? 'block' : 'hidden'} mt-2 p-3 bg-amber-950/30 border border-amber-700/40 rounded text-xs text-amber-200">
+                        💡 <strong>Tipp:</strong> ${task.hint}
+                    </div>
+                </div>
+            `;
+
+            // Render Right Code Inspector Pane
+            const taskFiles = task.files || {};
+            const firstFileName = Object.keys(taskFiles)[0] || 'README.md';
+            document.getElementById('editorFileName').innerHTML = `<i class="fa-regular fa-file-code text-blue-400"></i> ${firstFileName}`;
+            document.getElementById('editorCodePane').innerText = task.editorContent || '';
+        }
+
+        function showConnectedBanner() {
+            return `
+<div class="my-3 p-3 bg-rose-950/20 border border-rose-900/40 rounded-lg">
+<pre class="text-rose-500 font-bold leading-none select-none text-[10px] sm:text-xs font-mono">
+  ____ _____ ___ ____ ____ ____ ____ _ ____ _ __
+ / ___|_ _/ _ \| _ \___ \ / ___| _ \ / \ / ___| |/ /
+| | | || | | | |_) |__) | | | |_) |/ _ \| | | ' / 
+| |___ | || |_| | _ < /__/| |___| _ </ ___ \ |___| . \ 
+ \____| |_| \___/|_| \_\_____\____|_| \_/_/ \_\____|_|\_\
+</pre>
+<div class="mt-2 text-rose-400 text-xs font-bold flex items-center gap-1.5">
+    <i class="fa-solid fa-circle-check"></i> [+] Erfolgreich mit dem CyberCrack Zielserver verbunden!
+</div>
+</div>`;
+        }
+
+        function updatePromptDisplay() {
+            const promptSpan = document.getElementById('termPrompt');
+            const task = tasks[currentTaskIndex];
+
+            if (isConnectedToTarget) {
+                promptSpan.innerText = `root@cybercrack:${task.path}#`;
+            } else {
+                promptSpan.innerText = `student@kali:~$`;
+            }
+        }
+
+        function submitFlag() {
+            const input = document.getElementById('flagInput').value.trim();
+            const feedback = document.getElementById('flagFeedback');
+            const task = tasks[currentTaskIndex];
+
+            if (input === task.flag) {
+                const newlyCompleted = !completedTasks.has(task.id);
+                if (newlyCompleted) {
+                    completedTasks.add(task.id);
+                    userXP += task.xp;
+                    updateHeaderStats();
+                }
+                feedback.innerHTML = `<span class="text-emerald-400 font-bold flex items-center gap-1 mt-1"><i class="fa-solid fa-circle-check"></i> Richtig! +${task.xp} XP erhalten.</span>`;
+                renderTasksList();
+                selectTask(currentTaskIndex);
+                if (newlyCompleted && completedTasks.size === tasks.length) {
+                    openCompletionModal();
+                }
+            } else {
+                feedback.innerHTML = `<span class="text-red-400 font-bold flex items-center gap-1 mt-1"><i class="fa-solid fa-circle-xmark"></i> Falsche Flagge! Versuche es noch einmal.</span>`;
+            }
+        }
+
+        function openCompletionModal() {
+            const modal = document.getElementById('completionModal');
+            modal.hidden = false;
+            previousBodyOverflow = document.body.style.overflow;
+            document.body.style.overflow = 'hidden';
+            launchCompletionConfetti();
+            document.getElementById('completionCloseButton').focus();
+        }
+
+        function closeCompletionModal() {
+            const modal = document.getElementById('completionModal');
+            if (modal.hidden) return;
+
+            modal.hidden = true;
+            document.body.style.overflow = previousBodyOverflow;
+            document.getElementById('completionConfetti').replaceChildren();
+        }
+
+        function launchCompletionConfetti() {
+            const layer = document.getElementById('completionConfetti');
+            layer.replaceChildren();
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+            const colors = ['#f87171', '#fbbf24', '#34d399', '#60a5fa', '#c084fc', '#fb7185'];
+            for (const side of ['left', 'right']) {
+                for (let index = 0; index < 55; index++) {
+                    const piece = document.createElement('span');
+                    const distance = window.innerWidth * (0.12 + Math.random() * 0.78);
+                    piece.className = 'completion-confetti-piece';
+                    piece.style[side] = `${Math.random() * 10}px`;
+                    piece.style.setProperty('--travel-x', `${side === 'left' ? distance : -distance}px`);
+                    piece.style.setProperty('--travel-y', `${-(window.innerHeight * (0.25 + Math.random() * 0.9))}px`);
+                    piece.style.setProperty('--spin', `${360 + Math.random() * 900}deg`);
+                    piece.style.setProperty('--duration', `${2 + Math.random() * 1.5}s`);
+                    piece.style.setProperty('--delay', `${Math.random() * 0.35}s`);
+                    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    piece.addEventListener('animationend', () => piece.remove(), { once: true });
+                    layer.appendChild(piece);
+                }
+            }
+        }
+
+        document.getElementById('completionCloseButton').addEventListener('click', closeCompletionModal);
+        document.getElementById('completionModal').addEventListener('click', event => {
+            if (event.target.id === 'completionModal') closeCompletionModal();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') closeCompletionModal();
+        });
+
+        function toggleHint(taskId) {
+            if (revealedHints.has(taskId)) {
+                revealedHints.delete(taskId);
+            } else {
+                revealedHints.add(taskId);
+            }
+            selectTask(currentTaskIndex);
+        }
+
+        function updateHeaderStats() {
+            document.getElementById('scoreBadge').innerText = `${userXP} XP`;
+            const pct = Math.round((completedTasks.size / tasks.length) * 100);
+            document.getElementById('overallProgress').style.width = `${pct}%`;
+            document.getElementById('progressText').innerText = `${pct}%`;
+        }
+
+        function toggleMachine() {
+            machineActive = !machineActive;
+            const btn = document.getElementById('targetBtn');
+            const statusText = document.getElementById('targetStatusText');
+            const ipBadge = document.getElementById('ipAddressBadge');
+
+            if (machineActive) {
+                btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-3 py-1.5 rounded flex items-center gap-2 transition";
+                statusText.innerText = "Target Aktiv";
+                ipBadge.classList.remove('hidden');
+            } else {
+                btn.className = "bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-3 py-1.5 rounded flex items-center gap-2 transition";
+                statusText.innerText = "Target Starten";
+                ipBadge.classList.add('hidden');
+                isConnectedToTarget = false;
+                updatePromptDisplay();
+            }
+        }
+
+        // Terminal Command Line Input Handling
+        document.getElementById('terminalInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const cmd = this.value.trim();
+                const history = document.getElementById('terminalHistory');
+                const task = tasks[currentTaskIndex];
+                const currentPrompt = document.getElementById('termPrompt').innerText;
+
+                // Hide initial welcome message if present
+                const welcomeContainer = document.getElementById('welcomeMessageContainer');
+                if (welcomeContainer) welcomeContainer.style.display = 'none';
+
+                // Append Executed Command Prompt Line
+                const line = document.createElement('div');
+                line.className = 'my-1';
+                line.innerHTML = `<span class="text-emerald-400 font-bold">${currentPrompt}</span> <span class="text-white">${escapeHtml(cmd)}</span>`;
+                history.appendChild(line);
+
+                // Command Interpreter Logic
+                let output = '';
+
+                if (cmd.startsWith('connect') || cmd.startsWith('ssh')) {
+                    if (!machineActive) {
+                        output = 'FEHLER: Target Machine ist ausgeschaltet! Klicke zuerst oben rechts auf "Target Starten".';
+                    } else {
+                        isConnectedToTarget = true;
+                        updatePromptDisplay();
+                        const bannerHtml = showConnectedBanner();
+                        const bannerDiv = document.createElement('div');
+                        bannerDiv.innerHTML = bannerHtml;
+                        history.appendChild(bannerDiv);
+                        output = `Verbindung hergestellt zu 10.10.142.88...\nWillkommen auf der CyberCrack Shell v2.6!\n\nVORBEREITUNGS-FLAGGE: FLAG{target_connected_2026}`;
+                    }
+                } else if (!isConnectedToTarget && cmd !== 'help' && cmd !== 'clear') {
+                    output = 'Hinweis: Du bist noch nicht mit dem Server verbunden! Tippe "connect 10.10.142.88" ein.';
+                } else if (cmd === 'ls' || cmd === 'dir') {
+                    const taskFiles = task.files || {};
+                    output = Object.keys(taskFiles).filter(f => !f.startsWith('.')).join(' ');
+                } else if (cmd === 'ls -la' || cmd === 'ls -a' || cmd === 'ls -l') {
+                    const taskFiles = task.files || {};
+                    output = '. .. ' + Object.keys(taskFiles).join(' ');
+                } else if (cmd === 'cat intercepted.log | base64 -d' || cmd === 'base64 -d intercepted.log') {
+                    const encodedFile = task.files["intercepted.log"];
+                    if (encodedFile) {
+                        try {
+                            output = atob(encodedFile);
+                        } catch (error) {
+                            output = 'base64: Datei enthält ungültige Daten';
+                        }
+                    } else {
+                        output = 'base64: Datei nicht gefunden: intercepted.log';
+                    }
+                } else if (cmd.startsWith('cat ')) {
+                    const filename = cmd.replace('cat ', '').trim();
+                    const taskFiles = task.files || {};
+                    if (taskFiles[filename]) {
+                        output = taskFiles[filename];
+                    } else {
+                        output = `cat: ${filename}: Datei oder Verzeichnis nicht gefunden`;
+                    }
+                } else if (/^(python3|node) [A-Za-z0-9_./-]+$/.test(cmd)) {
+                    const [interpreter, filename] = cmd.split(' ');
+                    const script = task.files[filename];
+                    if (!script) {
+                        output = `${interpreter}: Datei nicht gefunden: ${filename}`;
+                    } else {
+                        const flagMatch = script.match(/FLAG\{[^}]*\}/);
+                        output = flagMatch ? flagMatch[0] : 'Skript ausgeführt.';
+                    }
+                } else if (cmd.startsWith('curl ')) {
+                    const endpoint = cmd.slice(5).trim();
+                    output = task.files[endpoint] || '{"error": "Invalid endpoint"}';
+                } else if (cmd === 'sudo unlock --root' && task.id === 12) {
+                    output = task.flag;
+                } else if (cmd === 'clear') {
+                    history.innerHTML = '';
+                    this.value = '';
+                    updateCursorPosition();
+                    return;
+                } else if (cmd === 'help') {
+                    output = 'Verfügbare Befehle: connect 10.10.142.88, ls, ls -la, cat [datei], base64 -d [datei], python3 [script], node [script], curl [url], clear, help';
+                } else if (cmd !== '') {
+                    output = `bash: command not found: ${cmd}. Tippe 'help' für Befehle.`;
+                }
+
+                if (output) {
+                    const outLine = document.createElement('div');
+                    outLine.className = 'text-gray-400 whitespace-pre-wrap mb-2';
+                    outLine.innerText = output;
+                    history.appendChild(outLine);
+                }
+
+                this.value = '';
+                updateCursorPosition();
+                const termBody = document.getElementById('terminalBody');
+                termBody.scrollTop = termBody.scrollHeight;
+            }
+        });
+
+        function clearTerminal() {
+            const history = document.getElementById('terminalHistory');
+            if (history) {
+                history.innerHTML = '';
+            }
+            const welcomeMsg = document.getElementById('welcomeMessageContainer');
+            if (welcomeMsg) {
+                welcomeMsg.style.display = 'none';
+            }
+            updateCursorPosition();
+        }
+
+        function resetWorkspace() {
+            closeCompletionModal();
+            completedTasks.clear();
+            revealedHints.clear();
+            userXP = 0;
+            currentTaskIndex = 0;
+
+            if (machineActive) {
+                toggleMachine();
+            } else {
+                isConnectedToTarget = false;
+                updatePromptDisplay();
+            }
+
+            clearTerminal();
+            const welcomeMsg = document.getElementById('welcomeMessageContainer');
+            if (welcomeMsg) {
+                welcomeMsg.style.display = 'block';
+            }
+
+            updateHeaderStats();
+            renderTasksList();
+            selectTask(0);
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function focusTerminalInput() {
+            const input = document.getElementById('terminalInput');
+            if (input) {
+                input.focus();
+            }
+        }
+
+        function handleTerminalClick(e) {
+            focusTerminalInput();
+            const cursor = document.getElementById('customCursor');
+            if (!cursor) return;
+
+            // Transformat cursor to underscore style after 0.5s of clicking somewhere in terminal
+            if (underscoreTimer) clearTimeout(underscoreTimer);
+            underscoreTimer = setTimeout(() => {
+                cursor.classList.remove('unfocused');
+                cursor.classList.add('underscore');
+            }, 500);
+        }
+
+        function updateCursorPosition() {
+            const input = document.getElementById('terminalInput');
+            const mirror = document.getElementById('typedTextMirror');
+            const cursor = document.getElementById('customCursor');
+            if (!input || !mirror) return;
+
+            // Revert back to solid block cursor when typing
+            if (cursor && cursor.classList.contains('underscore')) {
+                cursor.classList.remove('underscore');
+            }
+
+            // Mirror exact text content to align cursor continuously without gap
+            mirror.textContent = input.value;
+        }
+
+        // Linux Terminal Focus / Blur Cursor Handling (0.5s Delay)
+        const cursorTerminalInputEl = document.getElementById('terminalInput');
+
+        cursorTerminalInputEl.addEventListener('focus', () => {
+            if (cursorFocusTimer) clearTimeout(cursorFocusTimer);
+            cursorFocusTimer = setTimeout(() => {
+                const cursor = document.getElementById('customCursor');
+                if (cursor) {
+                    cursor.classList.remove('unfocused');
+                }
+            }, 500); // 0.5 Sekunden Verzögerung
+        });
+
+        cursorTerminalInputEl.addEventListener('blur', () => {
+            if (cursorFocusTimer) clearTimeout(cursorFocusTimer);
+            cursorFocusTimer = setTimeout(() => {
+                const cursor = document.getElementById('customCursor');
+                if (cursor) {
+                    cursor.classList.remove('underscore');
+                    cursor.classList.add('unfocused');
+                }
+            }, 500); // 0.5 Sekunden Verzögerung
+        });
+        
+
+        cursorTerminalInputEl.addEventListener('input', updateCursorPosition);
+
+        // Initialize Application
+        renderTasksList();
+        selectTask(0);
+        setTimeout(updateCursorPosition, 100);
+    </script>
+</body>
+</html>
